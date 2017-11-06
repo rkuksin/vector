@@ -1,10 +1,12 @@
 ﻿#include <algorithm>
 #include <vector>
 #include <iostream>
+
+#include "myVector.h"
 #include "CountingPointer.h"
 
 template<class T>
-using Vector = std::vector<T>;
+using Vector = myVector<T>;
 
 using IntPointer = CountingPointer<int>;
 
