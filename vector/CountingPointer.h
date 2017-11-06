@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <assert.h> 
 
 template<class T>
@@ -8,6 +8,7 @@ public:
 	CountingPointer() : data_(nullptr) {
 	}
 
+	// принимает во владение data_
 	CountingPointer(T* data): data_(data) {
 		assert(data);
 		g_constructed++;

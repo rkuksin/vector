@@ -1,4 +1,4 @@
-#include <algorithm>
+п»ї#include <algorithm>
 #include <vector>
 #include <iostream>
 #include "CountingPointer.h"
@@ -10,11 +10,11 @@ using IntPointer = CountingPointer<int>;
 
 class VectorOwner {
 public:
-	// Конструктор, принимающий вектор во владение. C++ 11 style.
-	VectorOwner(Vector<IntPointer>&& v) : vector_(std::move(v)) {
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РїСЂРёРЅРёРјР°СЋС‰РёР№ РІРµРєС‚РѕСЂ РІРѕ РІР»Р°РґРµРЅРёРµ. C++ 11 style.
+	VectorOwner(Vector<IntPointer>&& v) :vector_(std::move(v)) {
 		std::cout << "moved vector" << std::endl;
 	}
-	// Конструктор, копирующий вектор (на надо так)
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РєРѕРїРёСЂСѓСЋС‰РёР№ РІРµРєС‚РѕСЂ (РЅР° РЅР°РґРѕ С‚Р°Рє)
 	VectorOwner(const Vector<IntPointer>& v) : vector_(v) {
 		std::cout << "copied vector" << std::endl;
 	}
@@ -24,7 +24,7 @@ private:
 
 class VectorOwner_ShorterVersion {
 public:
-	// Конструктор, который либо копирует вектор либо принимает его во владение в зависимости от типа. C++ 11 style.
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РєРѕС‚РѕСЂС‹Р№ Р»РёР±Рѕ РєРѕРїРёСЂСѓРµС‚ РІРµРєС‚РѕСЂ Р»РёР±Рѕ РїСЂРёРЅРёРјР°РµС‚ РµРіРѕ РІРѕ РІР»Р°РґРµРЅРёРµ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР°. C++ 11 style.
 	VectorOwner_ShorterVersion(Vector<IntPointer> v) : vector_(std::move(v)) {
 		std::cout << "moved or copied vector" << std::endl;
 	}
@@ -36,15 +36,15 @@ private:
 int main() {
 	{
 		Vector<IntPointer> vector;
-		// reserve выделяет в векторе память под указанное количество элементов, чтобы не было реаллокации
+		// reserve РІС‹РґРµР»СЏРµС‚ РІ РІРµРєС‚РѕСЂРµ РїР°РјСЏС‚СЊ РїРѕРґ СѓРєР°Р·Р°РЅРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ СЂРµР°Р»Р»РѕРєР°С†РёРё
 		vector.reserve(10);
 
 		for (int i : {55, 30, 41, 29, 11}) {
 			vector.push_back(new int(i));
 		}
 
-		// Аргумент push_back конвертируется к нашему типу через конструктор а потом перемещается в память вектора.
-		// Поэтому у нас 5 объектов создано и 5 перемещено.
+		// РђСЂРіСѓРјРµРЅС‚ push_back РєРѕРЅРІРµСЂС‚РёСЂСѓРµС‚СЃСЏ Рє РЅР°С€РµРјСѓ С‚РёРїСѓ С‡РµСЂРµР· РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Р° РїРѕС‚РѕРј РїРµСЂРµРјРµС‰Р°РµС‚СЃСЏ РІ РїР°РјСЏС‚СЊ РІРµРєС‚РѕСЂР°.
+		// РџРѕСЌС‚РѕРјСѓ Сѓ РЅР°СЃ 5 РѕР±СЉРµРєС‚РѕРІ СЃРѕР·РґР°РЅРѕ Рё 5 РїРµСЂРµРјРµС‰РµРЅРѕ.
 		assert(IntPointer::GetConstructedCount() == 5);
 		assert(IntPointer::GetMovedCount() == 5);
 		assert(IntPointer::GetCopiedCount() == 0);
@@ -54,13 +54,13 @@ int main() {
 			vector.emplace_back(new int(i));
 		}
 
-		// emplace_back создает объект прямо в памяти вектора, ничего не перемещается.
+		// emplace_back СЃРѕР·РґР°РµС‚ РѕР±СЉРµРєС‚ РїСЂСЏРјРѕ РІ РїР°РјСЏС‚Рё РІРµРєС‚РѕСЂР°, РЅРёС‡РµРіРѕ РЅРµ РїРµСЂРµРјРµС‰Р°РµС‚СЃСЏ.
 		assert(IntPointer::GetConstructedCount() == 10);
 		assert(IntPointer::GetMovedCount() == 5);
 		assert(IntPointer::GetCopiedCount() == 0);
 		assert(IntPointer::GetDestructedCount() == 0);
 
-		// создадим копию вектора
+		// СЃРѕР·РґР°РґРёРј РєРѕРїРёСЋ РІРµРєС‚РѕСЂР°
 		Vector<IntPointer> vector_copy = vector;
 
 		assert(IntPointer::GetConstructedCount() == 10);
@@ -68,12 +68,55 @@ int main() {
 		assert(IntPointer::GetCopiedCount() == 10);
 		assert(IntPointer::GetDestructedCount() == 0);
 
-		// сортировка
-		std::sort(vector.begin(), vector.end());
+		// РљР°Рє РЅРµРїСЂР°РІРёР»СЊРЅРѕ РїРµСЂРµРґР°РІР°С‚СЊ РІРµРєС‚РѕСЂ РІРѕ РІР»Р°РґРµРЅРёРµ РѕР±СЉРµРєС‚Сѓ РїРѕСЃР»Рµ РїРѕСЏРІР»РµРЅРёСЏ move-СЃРµРјР°РЅС‚РёРєРё:
+		VectorOwner owner1(vector);
 
-		// Скорее всего это справедливо только для одной реализации std::sort.
-		// Реализация MS VC++ 17 справилась в 50 перемещений.
-		// Независимо от реализации в ходе сортировки не должно быть ни одной копии.
+		// РІСЃРµ СЌР»РµРјРµРЅС‚С‹ СЃРєРѕРїРёСЂРѕРІР°РЅС‹=(
+		assert(IntPointer::GetConstructedCount() == 10);
+		assert(IntPointer::GetMovedCount() == 5);
+		assert(IntPointer::GetCopiedCount() == 20);
+		assert(IntPointer::GetDestructedCount() == 0);
+
+		// РљР°Рє СЌС‚Рѕ РґРµР»Р°С‚СЊ РїСЂР°РІРёР»СЊРЅРѕ:
+		VectorOwner owner2(std::move(vector));
+		
+		// РќРё РѕРґРЅРѕРіРѕ РїРµСЂРµРјРµС‰РµРЅРёСЏ, РЅРё РѕРґРЅРѕР№ РєРѕРїРёРё, РєР°Рє С‚Р°Рє?
+		assert(IntPointer::GetConstructedCount() == 10);
+		assert(IntPointer::GetMovedCount() == 5);
+		assert(IntPointer::GetCopiedCount() == 20);
+		assert(IntPointer::GetDestructedCount() == 0);
+
+		// Р’РµРєС‚РѕСЂРѕРј Р±РѕР»СЊС€Рµ РїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РЅРµР»СЊР·СЏ. РћРЅ РїРµСЂРµРµС…Р°Р» РІРЅСѓС‚СЂСЊ VectorOwner.
+		assert(vector.size() == 0);
+
+		// Рљ СЃС‡Р°СЃС‚СЊСЋ, РјС‹ Р·Р°СЂР°РЅРµРµ СЃРґРµР»Р°Р»Рё РєРѕРїРёСЋ РІРµРєС‚РѕСЂР° Рё РјРѕР¶РµРј РїСЂРѕРІРµСЂРёС‚СЊ С‚Рѕ Р¶Рµ СЃР°РјРѕРµ РЅР° РІС‚РѕСЂРѕРј РєР»Р°СЃСЃРµ.
+		// РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ СЃРїРѕСЃРѕР±:
+		VectorOwner_ShorterVersion owner_3(vector_copy);
+
+		// РІСЃРµ СЌР»РµРјРµРЅС‚С‹ СЃРєРѕРїРёСЂРѕРІР°РЅС‹=(
+		assert(IntPointer::GetConstructedCount() == 10);
+		assert(IntPointer::GetMovedCount() == 5);
+		assert(IntPointer::GetCopiedCount() == 30);
+		assert(IntPointer::GetDestructedCount() == 0);
+
+		// РџСЂР°РІРёР»СЊРЅС‹Р№ СЃРїРѕСЃРѕР±:
+		VectorOwner_ShorterVersion owner_4(std::move(vector_copy));
+
+		// РЅРё РѕРґРЅРѕРіРѕ РїРµСЂРµРјРµС‰РµРЅРёСЏ РёР»Рё РєРѕРїРёРё =)
+		assert(IntPointer::GetConstructedCount() == 10);
+		assert(IntPointer::GetMovedCount() == 5);
+		assert(IntPointer::GetCopiedCount() == 30);
+		assert(IntPointer::GetDestructedCount() == 0);
+
+		// Р•СЃР»Рё РІРёРґРёС€СЊ std::move РґР»СЏ РїРµСЂРµРјРµРЅРЅРѕР№, Р·Р°Р±СѓРґСЊ Рѕ РЅРµР№.
+		assert(vector_copy.size() == 0);	
+
+		// СЃРѕСЂС‚РёСЂРѕРІРєР°
+#if 0
+		std::sort(vector.begin(), vector.end());
+		// РЎРєРѕСЂРµРµ РІСЃРµРіРѕ СЌС‚Рѕ СЃРїСЂР°РІРµРґР»РёРІРѕ С‚РѕР»СЊРєРѕ РґР»СЏ РѕРґРЅРѕР№ СЂРµР°Р»РёР·Р°С†РёРё std::sort.
+		// Р РµР°Р»РёР·Р°С†РёСЏ MS VC++ 17 СЃРїСЂР°РІРёР»Р°СЃСЊ РІ 50 РїРµСЂРµРјРµС‰РµРЅРёР№.
+		// РќРµР·Р°РІРёСЃРёРјРѕ РѕС‚ СЂРµР°Р»РёР·Р°С†РёРё РІ С…РѕРґРµ СЃРѕСЂС‚РёСЂРѕРІРєРё РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРё РѕРґРЅРѕР№ РєРѕРїРёРё.
 		assert(IntPointer::GetConstructedCount() == 10);
 		assert(IntPointer::GetMovedCount() == 55);
 		assert(IntPointer::GetCopiedCount() == 10);
@@ -83,52 +126,10 @@ int main() {
 		for (int i : {8, 11, 13, 15, 29, 30, 41, 43, 46, 55}) {
 			assert(*vector[n++].Get() == i);
 		}
-
-		// Как неправильно передавать вектор во владение объекту после появления move-семантики:
-		VectorOwner owner1(vector);
-
-		// все элементы скопированы=(
-		assert(IntPointer::GetConstructedCount() == 10);
-		assert(IntPointer::GetMovedCount() == 55);
-		assert(IntPointer::GetCopiedCount() == 20);
-		assert(IntPointer::GetDestructedCount() == 0);
-
-		// Как это делать правильно:
-		VectorOwner owner2(std::move(vector));
-		
-		// Ни одного перемещения, ни одной копии, как так?
-		assert(IntPointer::GetConstructedCount() == 10);
-		assert(IntPointer::GetMovedCount() == 55);
-		assert(IntPointer::GetCopiedCount() == 20);
-		assert(IntPointer::GetDestructedCount() == 0);
-
-		// Вектором больше пользоваться нельзя. Он переехал внутрь VectorOwner.
-		assert(vector.size() == 0);
-
-		// К счастью, мы заранее сделали копию вектора и можем проверить то же самое на втором классе.
-		// Неправильный способ:
-		VectorOwner_ShorterVersion owner_3(vector_copy);
-
-		// все элементы скопированы=(
-		assert(IntPointer::GetConstructedCount() == 10);
-		assert(IntPointer::GetMovedCount() == 55);
-		assert(IntPointer::GetCopiedCount() == 30);
-		assert(IntPointer::GetDestructedCount() == 0);
-
-		// Правильный способ:
-		VectorOwner_ShorterVersion owner_4(std::move(vector_copy));
-
-		// ни одного перемещения или копии =)
-		assert(IntPointer::GetConstructedCount() == 10);
-		assert(IntPointer::GetMovedCount() == 55);
-		assert(IntPointer::GetCopiedCount() == 30);
-		assert(IntPointer::GetDestructedCount() == 0);
-
-		// Если видишь std::move для переменной, забудь о ней.
-		assert(vector_copy.size() == 0);	
+#endif
 	}
 
-	// Когда мы выходим из скоупа, все элементы должны быть уничтожены.
+	// РљРѕРіРґР° РјС‹ РІС‹С…РѕРґРёРј РёР· СЃРєРѕСѓРїР°, РІСЃРµ СЌР»РµРјРµРЅС‚С‹ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ СѓРЅРёС‡С‚РѕР¶РµРЅС‹.
 	assert(IntPointer::GetConstructedCount() + IntPointer::GetCopiedCount() == IntPointer::GetDestructedCount());
 
 	system("pause");
