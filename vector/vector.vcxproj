@@ -112,6 +112,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CountingPointer.h" />
+    <ClInclude Include="myVector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

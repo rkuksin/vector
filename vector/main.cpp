@@ -1,10 +1,12 @@
 ﻿#include <algorithm>
 #include <vector>
 #include <iostream>
+
+#include "myVector.h"
 #include "CountingPointer.h"
 
 template<class T>
-using Vector = std::vector<T>;
+using Vector = std::vector<T>;//myVector<T>;
 
 using IntPointer = CountingPointer<int>;
 
@@ -68,51 +70,7 @@ int main() {
 		assert(IntPointer::GetCopiedCount() == 10);
 		assert(IntPointer::GetDestructedCount() == 0);
 
-		// Как неправильно передавать вектор во владение объекту после появления move-семантики:
-		VectorOwner owner1(vector);
-
-		// все элементы скопированы=(
-		assert(IntPointer::GetConstructedCount() == 10);
-		assert(IntPointer::GetMovedCount() == 5);
-		assert(IntPointer::GetCopiedCount() == 20);
-		assert(IntPointer::GetDestructedCount() == 0);
-
-		// Как это делать правильно:
-		VectorOwner owner2(std::move(vector));
-		
-		// Ни одного перемещения, ни одной копии, как так?
-		assert(IntPointer::GetConstructedCount() == 10);
-		assert(IntPointer::GetMovedCount() == 5);
-		assert(IntPointer::GetCopiedCount() == 20);
-		assert(IntPointer::GetDestructedCount() == 0);
-
-		// Вектором больше пользоваться нельзя. Он переехал внутрь VectorOwner.
-		assert(vector.size() == 0);
-
-		// К счастью, мы заранее сделали копию вектора и можем проверить то же самое на втором классе.
-		// Неправильный способ:
-		VectorOwner_ShorterVersion owner_3(vector_copy);
-
-		// все элементы скопированы=(
-		assert(IntPointer::GetConstructedCount() == 10);
-		assert(IntPointer::GetMovedCount() == 5);
-		assert(IntPointer::GetCopiedCount() == 30);
-		assert(IntPointer::GetDestructedCount() == 0);
-
-		// Правильный способ:
-		VectorOwner_ShorterVersion owner_4(std::move(vector_copy));
-
-		// ни одного перемещения или копии =)
-		assert(IntPointer::GetConstructedCount() == 10);
-		assert(IntPointer::GetMovedCount() == 5);
-		assert(IntPointer::GetCopiedCount() == 30);
-		assert(IntPointer::GetDestructedCount() == 0);
-
-		// Если видишь std::move для переменной, забудь о ней.
-		assert(vector_copy.size() == 0);	
-
 		// сортировка
-#if 0
 		std::sort(vector.begin(), vector.end());
 		// Скорее всего это справедливо только для одной реализации std::sort.
 		// Реализация MS VC++ 17 справилась в 50 перемещений.
@@ -126,7 +84,50 @@ int main() {
 		for (int i : {8, 11, 13, 15, 29, 30, 41, 43, 46, 55}) {
 			assert(*vector[n++].Get() == i);
 		}
-#endif
+
+		assert(IntPointer::GetCopiedCount() == 10);
+		// Как неправильно передавать вектор во владение объекту после появления move-семантики:
+		VectorOwner owner1(vector);
+
+		// все элементы скопированы=(
+		assert(IntPointer::GetConstructedCount() == 10);
+		assert(IntPointer::GetMovedCount() == 55);
+		assert(IntPointer::GetCopiedCount() == 20);
+		assert(IntPointer::GetDestructedCount() == 0);
+
+		// Как это делать правильно:
+		VectorOwner owner2(std::move(vector));
+		
+		// Ни одного перемещения, ни одной копии, как так?
+		assert(IntPointer::GetConstructedCount() == 10);
+		assert(IntPointer::GetMovedCount() == 55);
+		assert(IntPointer::GetCopiedCount() == 20);
+		assert(IntPointer::GetDestructedCount() == 0);
+
+		// Вектором больше пользоваться нельзя. Он переехал внутрь VectorOwner.
+		assert(vector.size() == 0);
+
+		// К счастью, мы заранее сделали копию вектора и можем проверить то же самое на втором классе.
+		// Неправильный способ:
+		VectorOwner_ShorterVersion owner_3(vector_copy);
+
+		// все элементы скопированы=(
+		assert(IntPointer::GetConstructedCount() == 10);
+		assert(IntPointer::GetMovedCount() == 55);
+		assert(IntPointer::GetCopiedCount() == 30);
+		assert(IntPointer::GetDestructedCount() == 0);
+
+		// Правильный способ:
+		VectorOwner_ShorterVersion owner_4(std::move(vector_copy));
+
+		// ни одного перемещения или копии =)
+		assert(IntPointer::GetConstructedCount() == 10);
+		assert(IntPointer::GetMovedCount() == 55);
+		assert(IntPointer::GetCopiedCount() == 30);
+		assert(IntPointer::GetDestructedCount() == 0);
+
+		// Если видишь std::move для переменной, забудь о ней.
+		assert(vector_copy.size() == 0);			
 	}
 
 	// Когда мы выходим из скоупа, все элементы должны быть уничтожены.
