@@ -1,5 +1,6 @@
 #pragma once
 #include <assert.h>
+
 template <class T> class myVector
 {
 public:
@@ -20,12 +21,17 @@ public:
 		length++;
 	}
 	size_t size();
-	T* getData();
+	T* begin() { return data; };
+	T* end() { return data + length; };
+	T& operator[] (const size_t n) { 
+		return *(data + n); 
+	}
 	~myVector();
 private:
 	T* data;
 	size_t dataSize;
 	size_t length;
+	//std::iterator:: it;
 };
 
 template <class T> myVector<T>::myVector() : data(nullptr), dataSize(0), length(0) {}
@@ -37,6 +43,7 @@ template <class T> myVector<T>::myVector(const myVector& other) : dataSize(other
 	{
 		new(data + i)T(*(other.data + i));
 	}
+	//it = data;
 }
 
 template <class T> myVector<T>::myVector(myVector&& other)
@@ -44,6 +51,7 @@ template <class T> myVector<T>::myVector(myVector&& other)
 	data = other.data;
 	length = other.length;
 	dataSize = other.dataSize;
+	//it = other.it;
 	other.length = 0;
 	other.dataSize = 0;
 	other.data = nullptr;
@@ -92,11 +100,6 @@ template <class T> size_t myVector<T>::size()
 	return length;
 }
 
-template <class T> T* myVector<T>::getData()
-{
-	return data;
-}
-
 template <class T> myVector<T>::~myVector()
 {
 	for (size_t i = 0; i < length; i++)
@@ -105,3 +108,18 @@ template <class T> myVector<T>::~myVector()
 	}
 	free(data);
 }
+
+/*template <class T> T operator[] (const size_t n)
+{
+	return *(data + n);
+}
+
+template <class T> T* begin()
+{
+	return data;
+}
+
+template <class T> T* end()
+{
+	return data + length;
+}*/
